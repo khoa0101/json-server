@@ -5,16 +5,16 @@ export const API = (() => {
   const getEvents = () => 
     fetch([baseurl, path].join('/')).then((response) => response.json());
 
-  const addEvent = (event) => {
+  const addEvent = (event) => 
     fetch([baseurl, path].join('/'), {
-      methd: 'POST',
+      method: "POST",
       body: JSON.stringify(event),
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
     }).then((response) => response.json()); 
-  }  
+
   return {
     getEvents,
     addEvent,

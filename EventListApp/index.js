@@ -120,13 +120,14 @@ const Controller = ((model, view) => {
       const form = document.forms.add;
   
       submitBtn.addEventListener('click', (e) => {
+        e.preventDefault();
         const event = new model.Event(
           form.elements.eventName.value, 
           form.elements.startDate.value,
-          form.elements.endDate.value);
-        console.log(event);
+          form.elements.endDate.value
+        );
         model.addEvent(event).then((newEvent) => {
-          state.eventList = [newEvent, ...state.eventList];
+          state.eventList = [...state.eventList, newEvent];
         });
         state.adding = false;
       }), 
