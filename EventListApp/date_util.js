@@ -10,3 +10,9 @@ export const dateCalc = (value) => {
 
   return `${year}-${month}-${date}`;
 }
+
+export const dateConvert = (value) => {
+  let result = new Date(value).getTime();
+
+  return result;
+}
