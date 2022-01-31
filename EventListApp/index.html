@@ -4,6 +4,19 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>EventList</title>
+    <link rel="stylesheet" href="./index.css" />
+    <script async src="./index.js" type="module"></script>
   </head>
-  <body></body>
+  <body>
+    <header class='add-new-btn-container'>
+      <button class='add-new-btn'>ADD NEW</button>
+    </header>
+    <header class='events-header-container'>
+      <h1 class='col-header'>Event name</h1>
+      <h1 class='col-header'>Start date</h1>
+      <h1 class='col-header'>End date</h1>
+      <h1 class='col-header action-header'>Actions</h1>
+    </header>
+    <ul id='eventlist-container'></ul>
+  </body>
 </html>
