@@ -15,8 +15,18 @@ export const API = (() => {
       },
     }).then((response) => response.json()); 
 
+  const deleteEvent = (id) => 
+    fetch([baseurl, path, id].join('/'), {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+    }).then((response) => response.json());
+    
   return {
     getEvents,
     addEvent,
+    deleteEvent,
   }
 })();

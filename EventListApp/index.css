@@ -95,3 +95,7 @@ li{
   color: var(--button-blue);
   font-weight: bold;
 }
+
+.add-new-btn:hover, .buttons:hover{
+  cursor: pointer;
+}

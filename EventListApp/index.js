@@ -8,6 +8,7 @@ const View = (() => {
     inputRow: '#input-row',
     submitBtn: '.add-btn',
     closeBtn: '.close-btn',
+    deleteBtn: '.delete-btn',
   }
 
   const render = (element, tmp) => {
@@ -70,6 +71,7 @@ const Model = ((api, view) => {
   class State {
     #eventList = [];
     #adding = false;
+    #editing = false; 
 
     get eventList(){
       return this.#eventList;
@@ -98,12 +100,14 @@ const Model = ((api, view) => {
 
   const getEvents = api.getEvents;
   const addEvent = api.addEvent;
+  const deleteEvent = api.deleteEvent;
   
   return {
     Event,
     State,
     getEvents,
     addEvent,
+    deleteEvent
   }
 })(API, View);
 
@@ -121,6 +125,7 @@ const Controller = ((model, view) => {
   
       submitBtn.addEventListener('click', (e) => {
         e.preventDefault();
+        
         const event = new model.Event(
           form.elements.eventName.value, 
           form.elements.startDate.value,
@@ -138,15 +143,29 @@ const Controller = ((model, view) => {
     })
   }
 
+  const deleteEvent = () => {
+    const deleteBtns = document.querySelectorAll(view.domstr.deleteBtn);
+
+    deleteBtns.forEach((ele) => 
+      ele.addEventListener("click", (e) => {
+      console.log('click');
+      if (e.target.id !== '') {
+        state.eventList = state.eventList.filter((event) => {
+        return +event.id !== +e.target.id;
+      })};
+      model.deleteEvent(e.target.id);
+    }))
+  };
+
   const init = () => {
     model.getEvents().then((data) => {
       state.eventList = data;
-    })
+    }).then(deleteEvent);
   }
 
   const bootstrap = () => {
     init();
-    addButtonEvent(); 
+    addButtonEvent();
   }
 
   return { 

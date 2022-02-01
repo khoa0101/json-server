@@ -12,7 +12,7 @@ export const dateCalc = (value) => {
 }
 
 export const dateConvert = (value) => {
-  let result = new Date(value).getTime();
-
+  let result = new Date(value).getTime() + '';
+  
   return result;
 }
