@@ -9,10 +9,13 @@ const View = (() => {
     submitBtn: '.add-btn',
     closeBtn: '.close-btn',
     deleteBtn: '.delete-btn',
+    editBtn: '.edit-btn',
+    editli: '.event-',
+    saveBtn: '.save-btn',
   }
 
   const render = (element, tmp) => {
-    element.innerHTML = tmp; 
+    element.innerHTML = tmp;
   }
 
   const createTmp = (arr, attr) => {
@@ -21,7 +24,7 @@ const View = (() => {
       let startDate = dateCalc(ele.startDate);
       let endDate = dateCalc(ele.endDate);
       tmp += `
-        <li>
+        <li class='event-${ele.id}'>
           <input class='input-box' type='text' value='${ele.eventName}' ${attr}>
           <input class='input-box' type='date' value='${startDate}' ${attr}>
           <input class='input-box' type='date' value='${endDate}' ${attr}>
@@ -61,17 +64,17 @@ const View = (() => {
 
 const Model = ((api, view) => {
   class Event{
-    constructor(eventName, startDate, endDate){
+    constructor(eventName, startDate, endDate, id = null){
       this.eventName = eventName;
       this.startDate = dateConvert(startDate);
       this.endDate = dateConvert(endDate);
+      this.id = id;
     }
   }
 
   class State {
     #eventList = [];
-    #adding = false;
-    #editing = false; 
+    #adding = false; 
 
     get eventList(){
       return this.#eventList;
@@ -101,13 +104,17 @@ const Model = ((api, view) => {
   const getEvents = api.getEvents;
   const addEvent = api.addEvent;
   const deleteEvent = api.deleteEvent;
+  const editEvent = api.editEvent; 
+  const getEvent = api.getEvent;
   
   return {
     Event,
     State,
     getEvents,
+    getEvent,
     addEvent,
-    deleteEvent
+    deleteEvent,
+    editEvent
   }
 })(API, View);
 
@@ -157,10 +164,54 @@ const Controller = ((model, view) => {
     }))
   };
 
+  const editEvent = () => {
+    const editBtns = document.querySelectorAll(view.domstr.editBtn);
+
+    editBtns.forEach((ele) => 
+      ele.addEventListener("click", () => {
+        const editEle = document.querySelector(view.domstr.editli + ele.id);
+        model.getEvent(ele.id).then((event) => {
+          const tmp = `
+            <input class='input-box' id='name-${event.id}' type='text' value='${event.eventName}'>
+            <input class='input-box' id='start-${event.id}' type='date' value='${dateCalc(event.startDate)}'>
+            <input class='input-box' id='end-${event.id}' type='date' value='${dateCalc(event.endDate)}'>
+            <span class='action-btns'>
+              <button class='buttons save-btn' id='${event.id}'>SAVE</button>
+              <button class='buttons close-btn' id='${event.id}'>CLOSE</button>
+            </span>
+          `;
+          view.render(editEle, tmp);
+          
+          const saveBtn = document.querySelector(view.domstr.saveBtn);
+          saveBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const eventName = document.querySelector(`#name-${event.id}`);
+            const eventStart = document.querySelector(`#start-${event.id}`);
+            const eventEnd = document.querySelector(`#end-${event.id}`);
+
+            const newEvent = new model.Event(
+              eventName.value,
+              eventStart.value,
+              eventEnd.value,
+              event.id
+            );
+
+            model.editEvent(newEvent);
+          });
+
+          const closeBtn = document.querySelector(view.domstr.closeBtn);
+          closeBtn.addEventListener('click', (e) => {
+            state.eventList = state.eventList ;
+            editEvent();
+          })
+        });
+      }));
+  }
+
   const init = () => {
     model.getEvents().then((data) => {
       state.eventList = data;
-    }).then(deleteEvent);
+    }).then(deleteEvent).then(editEvent);
   }
 
   const bootstrap = () => {
